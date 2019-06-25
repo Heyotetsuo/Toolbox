@@ -7,9 +7,6 @@
 # Date: 6/11/2019
 # - - - - - - - - - - - - - -
 
-# Begins rendering whatever renders are in the queue.
-# Saves the project and clears the render queue on each run.
-
 # navigate to the local folder of this script
 cd "$( dirname "$0" )";
 
@@ -38,6 +35,7 @@ function makeClip(){
 	 ./ffmpeg -i "$dir/.bak/TL_${name}_%05d.jpg" -r 24 "$dir/TL_${name}.mp4";
 }
 
+# run makeClip() on exit
 trap makeClip EXIT;
 
 while true;
@@ -67,7 +65,7 @@ do
 		$idle -gt 10
 	]]
 	then
-		# do nothing
+		# ...do nothing
 		:
 	else
 		# update image number (with padding)
