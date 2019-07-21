@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# - - - - - - - - - - - - - - 
+# File: TimelapseScreen.sh
+# Version: 2.0.2
+# Author: Immanuel Morales
+# Date: 6/11/2019
+# - - - - - - - - - - - - - -
+
+# navigate to the local folder of this script
+cd "$( dirname "$0" )";
+
+# gather info
+clear;
+echo "What will the timelapse be called?"
+read name;
+
+clear;
+echo "Where would you like to save it? (You can just drag the folder in)";
+read dir;
+clear;
+
+# initialize variables
+pad="";
+fname="";
+win="";
+let idle=0;
+let i=0;
+
+# setup the behind-the-scenes
+mkdir "$dir/.bak";
+
+# set up end sequence to make a video clip
+function makeClip(){
+	 ./ffmpeg -i "$dir/.bak/TL_${name}_%05d.jpg" -r 24 "$dir/TL_${name}.mp4";
+}
+
+# run makeClip() on exit
+trap makeClip EXIT;
+
+while true;
+do
+	# getting idle time takes a few steps...
+	# ioreg grabs the raw output
+	# grep pulls the line of interest
+	# sed pulls just the number
+	idle=$(
+		ioreg -c IOHIDSystem |
+		grep -i "idle" |
+		sed 's/[^0-9]//g'
+	);
+
+	# scale `idle` down to seconds
+	let idle=idle/1000000000;
+
+	# get the active window
+	win=$( osascript ./getwin.scpt 2>/dev/null );
+
+	# if web browser is in use
+	# or if user is inactive for over 10 sec...
+	if [[
+		$win =~ ^firefox || 
+		$win =~ ^Google\ Chrome || 
+		$win =~ ^Safari ||
+		$idle -gt 10
+	]]
+	then
+		# ...do nothing
+		:
+	else
+		# update image number (with padding)
+		pad=$( printf "%05d\n" $i );
+
+		# build full path
+		fname="$dir/.bak/TL_${name}_$pad";
+
+		# take a snapshot
+		screencapture -x "$fname.jpg"; 
+
+		# scale it down to 1080p
+		sips -s format jpeg -Z 1920 "$fname.jpg"; 
+
+		let i+=1;
+	fi
+	
+	# lower number = slower/more imgs
+	# higher number = faster/less imgs
+	sleep 5;
+done;
