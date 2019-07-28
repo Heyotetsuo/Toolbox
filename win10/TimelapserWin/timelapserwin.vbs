@@ -5,23 +5,30 @@
 ' Date: 7/20/2019
 ' - - - - - - - - - - - - -
 
-dim fso
-dim wsh
-dim shap
-dim dir
-dim prefix
-dim suffix
+dim fs : set fso = createObject("scripting.fileSystemObject")
+dim wsh : set wsh = createObject("wscript.shell")
+dim shap : set shap = createObject("shell.application")
+dim dir : set dir = shap.browseForFolder( 0, "SELECT TIMELAPSE DESTINATION", 1, "" )
+dim prefix : prefix = InputBox( "Enter Timelapse Name" )
+dim num
 dim fname
+dim fpath
 
-set fso = createObject("scripting.fileSystemObject")
-set wsh = createObject("wscript.shell")
-set shap = createObject("shell.application")
+function lPad(s, l, c)
+	dim n : n = 0
+	if l > len(s) then n = 1 - len(s)
+	lPad = string(n, c) & s
+end function
 
-set dir = shap.browseForFolder( 0, "SELECT TIMELAPSE DESTINATION", 1, "" )
-prefix = InputBox( "Enter Timelapse Name" )
 
-fso.createFolder dir & "\\bak"
+fso.createFolder dir.self.path & "\bak"
 
-:loop
-	
-goto :loop
+dim i : i = 1
+
+do
+	num = lPad(i, 5, "0")
+	fname = prefix & "_" & num & ".jpg" 
+	fpath = dir.self.path & "\bak\" & fname
+	sys.desktop.picture.saveToFile fpath
+	wscript.sleep 5000
+loop
