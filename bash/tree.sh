@@ -32,18 +32,15 @@ function LIST ()
 	for ITEM in *;
 	do
 		# not a directory
-		if [[ ! -d "$ITEM" ]]
-			# if its a directory
-			-d "$ITEM"
+		if [[
+			# if its not a directory
+			! -d "$ITEM"
 		]]
 		then
 			echo "$DEPTH$ITEM";
 			continue;
 		fi
 		if [[
-			# not a sym link
-			! -L "$ITEM" &&
-
 			# if its not a symbolic link
 			! -L "$ITEM" &&
 			
