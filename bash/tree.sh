@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/usr/bin/env bash
 
 # if no argument is passed by the user
 # the current working directory is used
@@ -22,33 +22,31 @@ function LIST ()
 
 	for ITEM in *;
 	do
-		if [[
-			# if it's not a symbolic link
-			! -L "$ITEM" &&
-			
-			# if it's a directory
-			-d "$ITEM"
-		]]
+		# not a directory
+		if [[ ! -d "$ITEM" ]]
 		then
-			# add a slash to it
-			echo "$DEPTH$ITEM/";
-		else
 			echo "$DEPTH$ITEM";
+			continue;
 		fi
-
 		if [[
-			# if we're allowed to open it
+			# not a sym link
+			! -L "$ITEM" &&
+
+			# can open
 			-x "$ITEM"
 		]]
 		then
-			# append a tab to DEPTH
-			NEWDEPTH=$DEPTH$'\t';
+			# add a slash
+			echo "$DEPTH$ITEM/";
 
-			# recursive call to LIST
-			# needs it's own subshell
-			# because the `local` builtin
-			# doesn't work recursively
-			( LIST "$ITEM" "$NEWDEPTH" );
+			# add a tab
+			DEPTH2=$DEPTH$'\t';
+
+			# recursive LIST call 
+			# needs a subshell
+			# cause `local` wont
+			# work recursively
+			(LIST "$ITEM" "$DEPTH2");
 		fi
 	done;
 
@@ -61,6 +59,6 @@ shopt -s nullglob;
 # allow for CTRL+C to interrupt process
 trap "exit" SIGINT SIGTERM;
 
-# if you enclose this function call in a subshell
-# make sure to include the trap
+# if you enclose this in a subshell
+# include the trap
 LIST "$TARGET" "";
