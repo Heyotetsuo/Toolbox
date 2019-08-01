@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/env bash
 
 # retrieve raw content from the in-focus tweet
-source="$( curl "$1" | egrep 'permalink-inner permalink-tweet-container ThreadedConversation ThreadedConversation--permalinkTweetWithAncestors' -A 1000 )";
+source="$(curl "$1" | grep 'permalink-inner permalink-tweet-container' -A 1000)";
 
 # get handle from url
 handle="$(
 	echo "$1" |
-	sed -E 's/.+?twitter.com\///' |
+	sed -E 's/.+twitter.com\///' |
 	sed -E 's/\/.*//'
 )";
 
@@ -29,7 +29,7 @@ name="$(
 body="$(
 	echo "$source" |
 	egrep -o "TweetTextSize TweetTextSize--jumbo js-tweet-text tweet-text.+?</p>" |
-	grep -zo ">.*<" |
+	grep -o ">.*<" |
 	tr -d '>' |
 	tr -d '<'
 )";
@@ -38,7 +38,9 @@ body="$(
 date="$(
 	echo "$source" |
 	egrep -o -m 1 "tweet-timestamp js-permalink js-nav js-tooltip.+?data-conversation" |
-	grep -zo '=.*?'
+	grep -o '=.*' |
+	grep -o '".*"' |
+	tr -d '"'
 )";
 
 # for debugging
