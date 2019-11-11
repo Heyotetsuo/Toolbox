@@ -5,6 +5,7 @@
 	var style = {};
 	var i = 0;
 	while ( i < all.length ){
+		style = getComputedStyle( all[i] );
 		if ( style.overflow !== "" )
 		{
 			all[i].style.cssText = "overflow: visible !important";
