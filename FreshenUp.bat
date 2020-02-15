@@ -1,4 +1,4 @@
-wmic service where 'name like "Update"' call stopservice
+wmic service where 'name like "%%Update%%"' call stopservice
 sc stop AGMService
 sc stop AGSService
 sc stop TabletInputService
