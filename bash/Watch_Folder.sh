@@ -16,7 +16,6 @@ while true;
 do
 	# get the folder contents
 	THIS=$(ls);
-  	clear;
 
 	# get what changed
 	rawDiff=$( diff <(echo "$LAST") <(echo "$THIS") );
@@ -35,6 +34,7 @@ do
 	filtDiff=$( echo "$filtDiff" | sed -E 's/(removed.*)/\1 from '"$name"'/g' );
 
 	# display and say the change
+	clear;
 	echo "$filtDiff";
 	say -r 150 "$filtDiff";
 
@@ -43,7 +43,7 @@ do
 	LAST=$(ls);
 
 	# display directory again (in order of
-	clear;
+  	clear;
 	ls -ltr;
 	
 	# wait a second because CPU cycles don't grow on trees 
