@@ -1,3 +1,4 @@
+wmic service where 'name like "Update"' call stopservice
 sc stop AGMService
 sc stop AGSService
 sc stop TabletInputService
@@ -16,4 +17,5 @@ taskkill -t -f -im OneDrive*
 taskkill -t -f -im WinStore*
 taskkill -t -f -im rundll*
 taskkill -t -f -im ProcessLasso*
+taskkill -t -f -im Video*
 pause
