@@ -5,6 +5,7 @@ wmic process where 'name like "%%Adobe%%"' call terminate
 wmic process where 'name like "%%Skype%%"' call terminate
 wmic process where 'name like "%%UsoClient%%"' call terminate
 wmic process where 'name like "%%Microsoft%%"' call terminate
+wmic process where 'name like "%%Notif%%"' call terminate
 sc stop AGMService
 sc stop AGSService
 sc stop TabletInputService
@@ -19,3 +20,4 @@ taskkill -t -f -im rundll*
 taskkill -t -f -im ProcessLasso*
 taskkill -t -f -im Video*
 pause
+exit
