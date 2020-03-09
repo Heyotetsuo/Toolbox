@@ -1,0 +1,1 @@
+bash logoutOthers.sh %username%
